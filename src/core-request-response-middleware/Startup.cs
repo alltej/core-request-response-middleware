@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using core_request_response_middleware.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -38,6 +39,8 @@ namespace core_request_response_middleware
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddMvc();
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -50,7 +53,11 @@ namespace core_request_response_middleware
 
             app.UseApplicationInsightsExceptionTelemetry();
 
+            app.UseResponseHandlingMiddleware();
+
             app.UseMvc();
+
+            
         }
     }
 }
