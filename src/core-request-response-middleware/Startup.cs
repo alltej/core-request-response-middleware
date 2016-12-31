@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using core_request_response_middleware.Configs;
 using core_request_response_middleware.Middlewares;
+using core_request_response_middleware.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -40,7 +42,11 @@ namespace core_request_response_middleware
 
             services.AddMvc();
 
-           
+            // AT: Add services (e.g. configuration, services, etc)
+            services.Configure<AppSettingsConfig>(Configuration);
+
+            // AT: 
+            services.AddSingleton<IProductServices, ProductServices>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

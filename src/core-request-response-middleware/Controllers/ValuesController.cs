@@ -2,13 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using core_request_response_middleware.Configs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace core_request_response_middleware.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        private readonly IOptions<AppSettingsConfig> _settings;
+        public ValuesController(IOptions<AppSettingsConfig> settings)
+        {
+            _settings = settings;
+        }
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
@@ -39,6 +47,14 @@ namespace core_request_response_middleware.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+
+        // GET api/values
+        [HttpGet("app")]
+        public IActionResult GetAppSettings()
+        {
+            return Ok(_settings.Value);
         }
     }
 }

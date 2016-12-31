@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
+using core_request_response_middleware.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace core_request_response_middleware.Controllers.Products
@@ -7,40 +8,39 @@ namespace core_request_response_middleware.Controllers.Products
     [Route("api/[controller]")]
     public class ProductsController : Controller
     {
-        private readonly List<Product> _products;
+        private readonly IProductServices _svc;
 
-        public ProductsController()
+        public ProductsController(IProductServices productSvc)
         {
-            _products = GetProductsRepository();
+            _svc = productSvc;
+            //_products = GetProductsRepository();
         }
 
         // GET api/values
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_products);
+            return Ok(_svc.GetProducts);
         }
 
-        private static List<Product> GetProductsRepository()
+        [HttpGet("active")]
+        public IActionResult GetActive()
         {
-            var results = new List<Product>()
-            {
-                new Product() {Id = 1, Name = "ABC"},
-                new Product() {Id = 2, Name = "DEF"},
-                new Product() {Id = 3, Name = "XYZ"},
-            };
-            return results;
+            var products = _svc.GetProducts.ToList();
+            return Ok(products.Where(p => p.IsActive));
         }
+
 
         // GET api/values/5
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            if (id > 99)
+            if (id > 99) //AT: This for exception
             {
                 throw new ArgumentException("Out of Range");
             }
-            return Ok(_products.Find(p => p.Id == id));
+            var products = _svc.GetProducts.ToList();
+            return Ok(products.FirstOrDefault(p => p.Id == id));
         }
 
         // POST api/values
