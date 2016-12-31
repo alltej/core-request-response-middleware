@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using core_request_response_middleware.Extensions;
 using core_request_response_middleware.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +12,12 @@ namespace core_request_response_middleware.Controllers.Products
     public class ProductsController : Controller
     {
         private readonly IProductServices _svc;
+        private readonly IMapper _mapper;
 
-        public ProductsController(IProductServices productSvc)
+        public ProductsController(IProductServices productSvc, IMapper mapper)
         {
             _svc = productSvc;
+            _mapper = mapper;
             //_products = GetProductsRepository();
         }
 
@@ -20,7 +25,9 @@ namespace core_request_response_middleware.Controllers.Products
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_svc.GetProducts);
+            var products = _svc.GetProducts;
+            var list = products.MapTo<List<ProductModel>>();
+            return Ok(list);
         }
 
         [HttpGet("active")]
@@ -40,7 +47,8 @@ namespace core_request_response_middleware.Controllers.Products
                 throw new ArgumentException("Out of Range");
             }
             var products = _svc.GetProducts.ToList();
-            return Ok(products.FirstOrDefault(p => p.Id == id));
+            var product = products.FirstOrDefault(p => p.Id == id);
+            return Ok(product.MapTo<ProductModel>());
         }
 
         // POST api/values
